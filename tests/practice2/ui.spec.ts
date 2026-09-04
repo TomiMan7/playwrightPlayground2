@@ -1,0 +1,87 @@
+import { test, expect } from '../../src/fixtures/fixtures';
+import { readFile } from 'node:fs/promises';
+import { StatusCodes } from 'http-status-codes';
+import { SignUpDataFactory } from '../../src/test-data/ui-sign-up-data-factory';
+
+test.describe('auth tests', () => {
+  test.use({ storageState: '.customerAuth.json' });
+
+  test('Test the sign up functionality, with api validation at the end', async ({ shoppingApi }) => {
+    const authState = JSON.parse(await readFile('.customerAuth.json', 'utf8'));
+    const email = authState.email;
+    const password = authState.password;
+    const verificationResponse = await shoppingApi.verifyLogin(email, password);
+    const verificationBody = await verificationResponse.json();
+
+    expect(verificationBody.responseCode).toBe(StatusCodes.OK);
+    expect(verificationBody.message).toMatch('User exists!');
+  });
+
+  /*
+  test('Add items to cart via API validate them on UI', async ({ request, productsPage, shoppingApi}) => {
+
+    const itemId1 = SignUpDataFactory.createProductId(2, 3);
+    const itemId2 = SignUpDataFactory.createProductId(4, 6);
+
+    //Blocked by cloudeflare
+    await shoppingApi.addItemToCartViaAPI(itemId1);
+    await shoppingApi.addItemToCartViaAPI(itemId2);
+
+    await productsPage.goToCartPage();
+    //add checks if workaround is found
+  });
+  */
+
+  test('Add items to cart, via ui, then validate them on the checkout page', async ({ page, productsPage, productInfoPage, checkoutPage, cartPage }) => {
+    const itemId1 = SignUpDataFactory.createProductId(1, 3);
+    const itemId2 = SignUpDataFactory.createProductId(4, 6);
+
+    await productsPage.goToSpecificProductInfoPageAndCloseAdIfVisible(itemId1);
+    const productName1 = await productInfoPage.addProductToCartAndReturnItsName();
+
+    await productsPage.goToSpecificProductInfoPageAndCloseAdIfVisible(itemId2);
+    const productName2 = await productInfoPage.addProductToCartAndReturnItsName();
+
+    await productsPage.goToCartPage();
+    await cartPage.returnProceedToCheckoutButton().waitFor({ state: 'visible' });
+    await cartPage.returnProceedToCheckoutButton().click();
+
+    expect(await checkoutPage.validateCartItemVisibility(productName1 as string)).toBe(true);
+    expect(await checkoutPage.validateCartItemVisibility(productName2 as string)).toBe(true);
+    expect(await checkoutPage.returnCartItemQuantity(itemId1, page)).toBe('1');
+    expect(await checkoutPage.returnCartItemQuantity(itemId2, page)).toBe('1');
+  });
+});
+
+test.describe('unauth tests', () => {
+  test('Add items to cart, via ui, then validate them on the checkout page', async ({ page, productsPage, productInfoPage, loginPage, cartPage }) => {
+    const itemId1 = SignUpDataFactory.createProductId(2, 3);
+    const itemId2 = SignUpDataFactory.createProductId(4, 6);
+    const isCI = !!process.env.CI || !!process.env.GITHUB_ACTIONS;
+
+    await loginPage.goToLoginWithoutAuth(isCI);
+
+    await productsPage.goToSpecificProductInfoPageAndCloseAdIfVisible(itemId1);
+    const productName1 = await productInfoPage.addProductToCartAndReturnItsName();
+    await productsPage.closeAdIfVisible();
+
+    await productsPage.goToSpecificProductInfoPageAndCloseAdIfVisible(itemId2);
+    const productName2 = await productInfoPage.addProductToCartAndReturnItsName();
+    await productsPage.closeAdIfVisible();
+
+    await productsPage.goToCartPage();
+    expect(await cartPage.validateCartItemVisibility(productName1)).toBe(true);
+    expect(await cartPage.validateCartItemVisibility(productName2)).toBe(true);
+    expect(await cartPage.returnCartItemQuantity(itemId1, page)).toBe('1');
+    expect(await cartPage.returnCartItemQuantity(itemId2, page)).toBe('1');
+
+    await cartPage.returnProceedToCheckoutButton().waitFor({ state: 'visible' });
+    await cartPage.returnProceedToCheckoutButton().click();
+
+    expect(cartPage.returnregisterPopup()).toBeVisible();
+    expect(cartPage.returnregisterPopupButton()).toBeVisible();
+
+    await cartPage.returnregisterPopupButton().click();
+    expect(cartPage.returnregisterPopup()).not.toBeVisible();
+  });
+});
