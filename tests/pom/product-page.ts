@@ -1,5 +1,4 @@
 import { FrameLocator, Page, Locator } from '@playwright/test';
-import { requireEnv } from '../../src/utils/env';
 
 export class ProductsCartPOM {
   readonly page: Page;
@@ -15,7 +14,7 @@ export class ProductsCartPOM {
     this.productInfo = page.getByText('View Product');
     this.adFrame = page.frameLocator('iframe[name="aswift_3"]');
     this.closeAdButton = this.adFrame.getByRole('button', { name: 'Close ad' });
-    this.url = requireEnv(process.env.UI_URL as string);
+    this.url = process.env.UI_URL as string;
   }
   /**
    * Closes the ad popup if it is currently visible
