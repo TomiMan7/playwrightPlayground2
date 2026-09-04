@@ -46,9 +46,6 @@ jobs:
     if: ${{ github.event_name == 'pull_request' || github.ref == 'refs/heads/master' }}
     runs-on: ubuntu-latest
     env:
-      API_URL: ${{ secrets.API_URL }}
-      API_USERNAME: ${{ secrets.API_USERNAME }}
-      API_PASSWORD: ${{ secrets.API_PASSWORD }}
       UI_URL: ${{ secrets.UI_URL }}
     strategy:
       fail-fast: false

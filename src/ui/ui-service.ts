@@ -1,9 +1,10 @@
 import { APIRequestContext } from '@playwright/test';
+import { requireEnv } from '../utils/env';
 
 export class ShoppingApi {
   constructor(
     private readonly request: APIRequestContext,
-    private readonly baseUrl: string = process.env.UI_URL as string
+    private readonly baseUrl: string = requireEnv(process.env.UI_URL as string)
   ) {}
 
   /**
