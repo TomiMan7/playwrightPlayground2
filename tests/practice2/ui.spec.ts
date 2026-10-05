@@ -46,8 +46,8 @@ test.describe('auth tests', () => {
     await cartPage.returnProceedToCheckoutButton().waitFor({ state: 'visible' });
     await cartPage.returnProceedToCheckoutButton().click();
 
-    expect(await checkoutPage.validateCartItemVisibility(productName1 as string)).toBe(true);
-    expect(await checkoutPage.validateCartItemVisibility(productName2 as string)).toBe(true);
+    expect(await checkoutPage.validateCartItemVisibility(productName1)).toBe(true);
+    expect(await checkoutPage.validateCartItemVisibility(productName2)).toBe(true);
     expect(await checkoutPage.returnCartItemQuantity(itemId1, page)).toBe('1');
     expect(await checkoutPage.returnCartItemQuantity(itemId2, page)).toBe('1');
   });
@@ -78,10 +78,10 @@ test.describe('unauth tests', () => {
     await cartPage.returnProceedToCheckoutButton().waitFor({ state: 'visible' });
     await cartPage.returnProceedToCheckoutButton().click();
 
-    expect(cartPage.returnregisterPopup()).toBeVisible();
-    expect(cartPage.returnregisterPopupButton()).toBeVisible();
+    expect(cartPage.returnRegisterPopup()).toBeVisible();
+    expect(cartPage.returnRegisterPopupButton()).toBeVisible();
 
-    await cartPage.returnregisterPopupButton().click();
-    expect(cartPage.returnregisterPopup()).not.toBeVisible();
+    await cartPage.returnRegisterPopupButton().click();
+    expect(cartPage.returnRegisterPopup()).not.toBeVisible();
   });
 });

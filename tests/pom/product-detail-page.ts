@@ -17,14 +17,6 @@ export class ProductInfoPOM {
     });
   }
 
-  async clickElement(locator: Locator): Promise<void> {
-    await locator.click();
-  }
-
-  async isVisible(locator: Locator): Promise<boolean> {
-    return locator.isVisible().catch(() => false);
-  }
-
   async addProductToCartAndReturnItsName(): Promise<string> {
     await this.addToCartButton.click();
     await this.continueShoppingButton.click();

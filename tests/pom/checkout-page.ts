@@ -1,18 +1,10 @@
-import { Page, Locator } from '@playwright/test';
+import { Page } from '@playwright/test';
 
 export class CheckoutPagePOM {
   readonly page: Page;
 
   constructor(page: Page) {
     this.page = page;
-  }
-
-  async clickElement(locator: Locator): Promise<void> {
-    await locator.click();
-  }
-
-  async isVisible(locator: Locator): Promise<boolean> {
-    return locator.isVisible().catch(() => false);
   }
 
   /**

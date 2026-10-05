@@ -20,11 +20,11 @@ export class CartPagePOM {
     return this.proceedToCheckoutButton;
   }
 
-  returnregisterPopup(): Locator {
+  returnRegisterPopup(): Locator {
     return this.registerPopup;
   }
 
-  returnregisterPopupButton(): Locator {
+  returnRegisterPopupButton(): Locator {
     return this.registerPopupButton;
   }
 

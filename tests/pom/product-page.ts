@@ -29,10 +29,6 @@ export class ProductsCartPOM {
     await this.page.goto(this.url + '/products');
   }
 
-  async clickElement(locator: Locator): Promise<void> {
-    await locator.click();
-  }
-
   /**
    * Opens the product info page at the given position, then closes the ad if visible.
    * @param index - 1-based position of the product in the list
