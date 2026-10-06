@@ -28,9 +28,10 @@ export class CartPagePOM {
     return this.registerPopupButton;
   }
 
+  //ts doc
   async validateCartItemVisibility(value: string): Promise<boolean> {
     return this.page
-      .getByRole('heading', { name: value })
+      .getByRole('heading', { name: value }) //return just the selector
       .isVisible()
       .catch(() => false);
   }

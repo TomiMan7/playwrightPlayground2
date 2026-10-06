@@ -1,4 +1,4 @@
-import { test as setup } from '@playwright/test';
+import { test as setup } from '@playwright/test'; //use fixtures for this
 import { readFile, writeFile } from 'node:fs/promises';
 import { SignUpDataFactory } from '../../src/test-data/ui-sign-up-data-factory';
 import { LoginSignUpPOM } from '../pom/login-sign-up';

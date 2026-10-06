@@ -4,7 +4,7 @@ import { StatusCodes } from 'http-status-codes';
 import { SignUpDataFactory } from '../../src/test-data/ui-sign-up-data-factory';
 
 test.describe('auth tests', () => {
-  test.use({ storageState: '.customerAuth.json' });
+  test.use({ storageState: '.customerAuth.json' }); //make it default
 
   test('Test the sign up functionality, with api validation at the end', async ({ shoppingApi }) => {
     const authState = JSON.parse(await readFile('.customerAuth.json', 'utf8'));
@@ -59,7 +59,8 @@ test.describe('unauth tests', () => {
     const itemId2 = SignUpDataFactory.createProductId(4, 6);
     const isCI = !!process.env.CI || !!process.env.GITHUB_ACTIONS;
 
-    await loginPage.goToLoginWithoutAuth(isCI);
+    await loginPage.goToLoginWithoutAuth(isCI); //optional
+    //test step
 
     await productsPage.goToSpecificProductInfoPageAndCloseAdIfVisible(itemId1);
     const productName1 = await productInfoPage.addProductToCartAndReturnItsName();
