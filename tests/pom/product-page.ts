@@ -25,6 +25,10 @@ export class ProductsCartPOM {
     }
   }
 
+  /**
+   * Navigates to the products page.
+   * @returns a promise that resolves once the products page has loaded
+   */
   async gotoProductsPage(): Promise<void> {
     await this.page.goto(this.url + '/products');
   }
@@ -40,6 +44,10 @@ export class ProductsCartPOM {
     await this.closeAdIfVisible();
   }
 
+  /**
+   * Navigates to the cart page.
+   * @returns a promise that resolves once the cart page has loaded
+   */
   async goToCartPage(): Promise<void> {
     await this.page.goto(this.url + '/view_cart');
   }

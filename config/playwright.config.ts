@@ -46,9 +46,9 @@ export default defineConfig({
     },
     {
       name: 'ui',
-      //dependencies: ['setup'],
+      dependencies: ['setup'],
       testDir: resolve(__dirname, '..', 'tests', 'practice2'),
-      use: { ...devices['Desktop Chrome'] },
+      use: { ...devices['Desktop Chrome'], storageState: '.customerAuth.json' },
     },
   ],
 });

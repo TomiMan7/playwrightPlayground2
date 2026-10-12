@@ -3,9 +3,9 @@ import { Page, Locator } from '@playwright/test';
 export class CartPagePOM {
   readonly page: Page;
 
-  private readonly proceedToCheckoutButton: Locator;
-  private readonly registerPopup: Locator;
-  private readonly registerPopupButton: Locator;
+  readonly proceedToCheckoutButton: Locator;
+  readonly registerPopup: Locator;
+  readonly registerPopupButton: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -16,27 +16,23 @@ export class CartPagePOM {
       name: 'Continue On Cart',
     });
   }
-  returnProceedToCheckoutButton(): Locator {
-    return this.proceedToCheckoutButton;
+
+  /**
+   * Returns the cart item with the given ID
+   * @param value - the accessible name of the cart item heading to look for
+   * @returns locator of the cart item
+   */
+  async getCartItem(value: string): Promise<Locator> {
+    return this.page.getByRole('heading', { name: value });
   }
 
-  returnRegisterPopup(): Locator {
-    return this.registerPopup;
-  }
-
-  returnRegisterPopupButton(): Locator {
-    return this.registerPopupButton;
-  }
-
-  //ts doc
-  async validateCartItemVisibility(value: string): Promise<boolean> {
-    return this.page
-      .getByRole('heading', { name: value }) //return just the selector
-      .isVisible()
-      .catch(() => false);
-  }
-
-  async returnCartItemQuantity(id: number, page: Page): Promise<string> {
+  /**
+   * Returns the quantity text for a specific cart item.
+   * @param id - the product id of the cart item
+   * @param page - the Playwright Page to query
+   * @returns the quantity value as text
+   */
+  async getCartItemQuantity(id: number, page: Page): Promise<string> {
     return page.locator(`#product-${id} .cart_quantity`).innerText();
   }
 }

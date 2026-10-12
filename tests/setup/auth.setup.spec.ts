@@ -10,10 +10,9 @@ setup('Setup for the auth tests', async ({ page, context }) => {
     email: signUpData.email,
     password: signUpData.password,
   };
-  const isCI = !!process.env.CI || !!process.env.GITHUB_ACTIONS;
   const pom = new LoginSignUpPOM(page);
 
-  await pom.completeSignup(signUpData, isCI);
+  await pom.completeSignup(signUpData);
 
   //store cookies and credentials
   await context.storageState({ path: customerAuthFile });

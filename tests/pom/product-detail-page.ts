@@ -17,6 +17,10 @@ export class ProductInfoPOM {
     });
   }
 
+  /**
+   * Adds the first product to the cart, dismisses the continue shopping dialog, and returns the product name.
+   * @returns a promise that resolves with the name of the product added to the cart
+   */
   async addProductToCartAndReturnItsName(): Promise<string> {
     await this.addToCartButton.click();
     await this.continueShoppingButton.click();

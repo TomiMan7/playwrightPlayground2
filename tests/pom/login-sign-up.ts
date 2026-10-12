@@ -67,75 +67,100 @@ export class LoginSignUpPOM {
     this.adCloseButton = page.locator('iframe').locator('button').filter({ hasText: /close/i }).first();
   }
 
+  /**
+   * Navigates to the login/signup page using the UI_URL environment variable.
+   * @returns a promise that resolves once the login page has loaded
+   */
   async gotoLoginPage() {
     const url = process.env.UI_URL;
     await this.page.goto(url + '/login');
   }
 
-  async fillField(locator: Locator, text: string): Promise<void> {
-    await locator.fill(text);
-  }
-
-  async clickElement(locator: Locator): Promise<void> {
-    await locator.click();
-  }
-
-  async isVisible(locator: Locator): Promise<boolean> {
-    return locator.isVisible().catch(() => false);
-  }
-
+  /**
+   * Closes the advertisement overlay if its close button is visible.
+   * @returns a promise that resolves once the ad is closed or skipped
+   */
   async closeAdIfVisible(): Promise<void> {
-    if (await this.isVisible(this.adCloseButton)) {
-      await this.clickElement(this.adCloseButton);
+    if (await this.adCloseButton.isVisible().catch(() => false)) {
+      await this.adCloseButton.click();
     }
   }
 
-  async handleCookieConsent(isCI: boolean): Promise<void> {
+  /**
+   * Handles the cookie consent dialog when not running in CI.
+   * @returns a promise that resolves once consent is handled or skipped
+   */
+  async handleCookieConsent(): Promise<void> {
+    const isCI = !!process.env.CI || !!process.env.GITHUB_ACTIONS;
     if (!isCI) {
       await this.consentButton.waitFor({ state: 'visible' });
-      await this.clickElement(this.consentButton);
+      await this.consentButton.click();
     }
   }
 
+  /**
+   * Submits the initial signup form with the provided name and email.
+   * @param name name to register with
+   * @param email email address to register with
+   * @returns a promise that resolves once the signup form is submitted
+   */
   async signupUser(name: string, email: string): Promise<void> {
-    await this.fillField(this.signupNameInput, name);
-    await this.fillField(this.signupEmailInput, email);
-    await this.clickElement(this.signupButton);
+    await this.signupNameInput.fill(name);
+    await this.signupEmailInput.fill(email);
+    await this.signupButton.click();
   }
 
+  /**
+   * Fills in the full account details form with the provided signup data.
+   * @param data signup data used to populate the account details form
+   * @returns a promise that resolves once all account fields are filled
+   */
   async fillAccountDetails(data: SignUpData): Promise<void> {
-    await this.fillField(this.accountNameInput, data.name);
-    await this.fillField(this.passwordInput, data.password);
-    await this.fillField(this.firstnameInput, data.firstname);
-    await this.fillField(this.lastnameInput, data.lastname);
-    await this.fillField(this.addressInput, data.address);
-    await this.fillField(this.stateInput, data.state);
-    await this.fillField(this.cityInput, data.city);
-    await this.fillField(this.zipCodeInput, data.zipCode);
-    await this.fillField(this.mobileNumberInput, data.mobileNumber);
+    await this.accountNameInput.fill(data.name);
+    await this.passwordInput.fill(data.password);
+    await this.firstnameInput.fill(data.firstname);
+    await this.lastnameInput.fill(data.lastname);
+    await this.addressInput.fill(data.address);
+    await this.stateInput.fill(data.state);
+    await this.cityInput.fill(data.city);
+    await this.zipCodeInput.fill(data.zipCode);
+    await this.mobileNumberInput.fill(data.mobileNumber);
   }
 
+  /**
+   * Verifies that the account was created and continues past the confirmation.
+   * @returns a promise that resolves once the continue link is clicked
+   */
   async verifyAndContinue(): Promise<void> {
     await this.accountCreatedText.waitFor({
       state: 'visible',
       timeout: 10000,
     });
-    await this.clickElement(this.continueLink);
+    await this.continueLink.click();
   }
 
-  async completeSignup(data: SignUpData, isCI: boolean): Promise<void> {
+  /**
+   * Completes the full signup flow from navigation to account confirmation.
+   * @param data signup data used throughout the signup flow
+   * @returns a promise that resolves once the signup flow is complete
+   */
+  async completeSignup(data: SignUpData): Promise<void> {
     await this.gotoLoginPage();
-    await this.handleCookieConsent(isCI);
+    await this.handleCookieConsent();
     await this.signupUser(data.name, data.email);
     await this.fillAccountDetails(data);
-    await this.clickElement(this.createAccountButton);
+    await this.createAccountButton.click();
     await this.verifyAndContinue();
     await this.closeAdIfVisible();
   }
 
-  async goToLoginWithoutAuth(isCI: boolean): Promise<void> {
+  /**
+   * Navigates to the login page and handles consent and ads without signing up.
+   * @returns a promise that resolves once the login page is ready
+   */
+  async goToLoginWithoutAuth(): Promise<void> {
     await this.gotoLoginPage();
-    await this.handleCookieConsent(isCI);
+    await this.handleCookieConsent();
     await this.closeAdIfVisible();
   }
 }

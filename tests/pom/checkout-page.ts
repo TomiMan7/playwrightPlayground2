@@ -1,4 +1,4 @@
-import { Page } from '@playwright/test';
+import { Page, Locator } from '@playwright/test';
 
 export class CheckoutPagePOM {
   readonly page: Page;
@@ -8,15 +8,12 @@ export class CheckoutPagePOM {
   }
 
   /**
-   * Checks whether a cart item with the given name is visible.
+   * Returns the cart item with the given ID
    * @param value - the accessible name of the cart item heading to look for
-   * @returns true if the item heading is visible, false otherwise
+   * @returns locator of the cart item
    */
-  async validateCartItemVisibility(value: string): Promise<boolean> {
-    return this.page
-      .getByRole('heading', { name: value })
-      .isVisible()
-      .catch(() => false);
+  async getCartItem(value: string): Promise<Locator> {
+    return this.page.getByRole('heading', { name: value });
   }
 
   /**
@@ -25,7 +22,7 @@ export class CheckoutPagePOM {
    * @param page - the Playwright Page to query
    * @returns the quantity value as text
    */
-  async returnCartItemQuantity(id: number, page: Page): Promise<string> {
+  async getCartItemQuantity(id: number, page: Page): Promise<string> {
     return page.locator(`#product-${id} .cart_quantity`).innerText();
   }
 }
