@@ -1,0 +1,30 @@
+import { Page, Locator } from '@playwright/test';
+
+export class ProductInfoPOM {
+  readonly page: Page;
+
+  private readonly addToCartButton: Locator;
+  private readonly productName: Locator;
+  private readonly continueShoppingButton: Locator;
+
+  constructor(page: Page) {
+    this.page = page;
+
+    this.productName = page.locator('.product-information h2');
+    this.addToCartButton = page.getByRole('button', { name: ' Add to cart' });
+    this.continueShoppingButton = page.getByRole('button', {
+      name: 'Continue Shopping',
+    });
+  }
+
+  /**
+   * Adds the first product to the cart, dismisses the continue shopping dialog, and returns the product name.
+   * @returns a promise that resolves with the name of the product added to the cart
+   */
+  async addProductToCartAndReturnItsName(): Promise<string> {
+    await this.addToCartButton.click();
+    await this.continueShoppingButton.click();
+
+    return await this.productName.innerText();
+  }
+}
